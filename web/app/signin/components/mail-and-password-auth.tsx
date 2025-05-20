@@ -88,15 +88,24 @@ export default function MailAndPasswordAuth({ isInvite, isEmailSetup, allowRegis
       }
       else if (res.code === 'account_not_found') {
         // 始终允许注册，不再检查 allowRegistration
+        console.log('账号不存在，准备注册:', res);
+
+        // 直接跳转到重置密码页面，开始注册流程
         const params = new URLSearchParams()
         params.append('email', encodeURIComponent(email))
-        params.append('token', encodeURIComponent(res.data))
-        router.replace(`/reset-password/check-code?${params.toString()}`)
+        router.replace(`/reset-password?${params.toString()}`)
+
+        Toast.notify({
+          type: 'info',
+          message: '账号不存在，正在跳转到注册页面',
+        });
       }
       else {
+        // 显示详细的错误信息
+        console.log('登录失败，完整响应:', res);
         Toast.notify({
           type: 'error',
-          message: res.data,
+          message: `登录失败: ${res.data || '未知错误'} (代码: ${res.code || '无代码'})`,
         })
       }
     }
@@ -163,7 +172,7 @@ export default function MailAndPasswordAuth({ isInvite, isEmailSetup, allowRegis
       </div>
     </div>
 
-    <div className='mb-2'>
+    <div className='mb-4'>
       <Button
         tabIndex={2}
         variant='primary'
@@ -171,6 +180,29 @@ export default function MailAndPasswordAuth({ isInvite, isEmailSetup, allowRegis
         disabled={isLoading || !email || !password}
         className="w-full"
       >{t('login.signBtn')}</Button>
+    </div>
+
+    {/* 添加注册入口 */}
+    <div className="relative mb-4">
+      <div className="absolute inset-0 flex items-center" aria-hidden="true">
+        <div className='h-px w-full bg-gradient-to-r from-background-gradient-mask-transparent via-divider-regular to-background-gradient-mask-transparent'></div>
+      </div>
+      <div className="relative flex justify-center">
+        <span className="system-xs-medium-uppercase px-2 text-text-tertiary">{t('login.or')}</span>
+      </div>
+    </div>
+
+    <div className='mb-2'>
+      <Button
+        tabIndex={3}
+        variant='secondary'
+        onClick={() => {
+          const params = new URLSearchParams()
+          params.append('email', encodeURIComponent(email))
+          router.push(`/reset-password?${params.toString()}`)
+        }}
+        className="w-full"
+      >{t('login.registerNewAccount') || '注册新账号'}</Button>
     </div>
   </form>
 }
