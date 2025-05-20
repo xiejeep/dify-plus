@@ -87,18 +87,11 @@ export default function MailAndPasswordAuth({ isInvite, isEmailSetup, allowRegis
         }
       }
       else if (res.code === 'account_not_found') {
-        if (allowRegistration) {
-          const params = new URLSearchParams()
-          params.append('email', encodeURIComponent(email))
-          params.append('token', encodeURIComponent(res.data))
-          router.replace(`/reset-password/check-code?${params.toString()}`)
-        }
-        else {
-          Toast.notify({
-            type: 'error',
-            message: t('login.error.registrationNotAllowed'),
-          })
-        }
+        // 始终允许注册，不再检查 allowRegistration
+        const params = new URLSearchParams()
+        params.append('email', encodeURIComponent(email))
+        params.append('token', encodeURIComponent(res.data))
+        router.replace(`/reset-password/check-code?${params.toString()}`)
       }
       else {
         Toast.notify({
