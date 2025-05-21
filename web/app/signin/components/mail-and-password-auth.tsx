@@ -90,10 +90,10 @@ export default function MailAndPasswordAuth({ isInvite, isEmailSetup, allowRegis
         // 始终允许注册，不再检查 allowRegistration
         console.log('账号不存在，准备注册:', res);
 
-        // 直接跳转到重置密码页面，开始注册流程
+        // 直接跳转到注册页面
         const params = new URLSearchParams()
         params.append('email', encodeURIComponent(email))
-        router.replace(`/reset-password?${params.toString()}`)
+        router.replace(`/register?${params.toString()}`)
 
         Toast.notify({
           type: 'info',
@@ -199,7 +199,7 @@ export default function MailAndPasswordAuth({ isInvite, isEmailSetup, allowRegis
         onClick={() => {
           const params = new URLSearchParams()
           params.append('email', encodeURIComponent(email))
-          router.push(`/reset-password?${params.toString()}`)
+          router.push(`/register?${params.toString()}`)
         }}
         className="w-full"
       >{t('login.registerNewAccount') || '注册新账号'}</Button>
