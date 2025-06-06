@@ -116,6 +116,17 @@
                 </el-button>
               </el-form-item>
               <!--  新增OA登录 End -->
+              <!-- 新增用户注册链接 Begin -->
+              <el-form-item class="mb-6 text-center">
+                <el-link 
+                  type="primary" 
+                  @click="goToRegister"
+                  class="text-sm"
+                >
+                  还没有账户？点击注册
+                </el-link>
+              </el-form-item>
+              <!-- 新增用户注册链接 End -->
             </el-form>
           </div>
         </div>
@@ -308,6 +319,11 @@ const oaLoginJump = () => {
   const jumpUrl = oaUrl + '?client_id=' + clientId + '&redirect_uri=' + encodeURIComponent(redirect_uri) + '&state='
   console.log(jumpUrl)
   window.location.href = jumpUrl
+}
+
+// 跳转到注册页面
+const goToRegister = () => {
+  router.push('/register')
 }
 
 </script>

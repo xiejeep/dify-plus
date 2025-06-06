@@ -5,7 +5,8 @@ type ServiceGroup struct {
 	ApiService
 	MenuService
 	UserService
-	UserExtendService // 新增OA登录
+	UserExtendService   // 新增OA登录
+	UserRegisterService // 用户自主注册
 	CasbinService
 	InitDBService
 	AutoCodeService

@@ -6,7 +6,7 @@ import Nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 Nprogress.configure({ showSpinner: false, ease: 'ease', speed: 500 })
 
-const whiteList = ['Login', 'Init', 'LoginCallback'] // 新增OA登录：LoginCallback
+const whiteList = ['Login', 'Init', 'LoginCallback', 'Register'] // 新增OA登录：LoginCallback，新增用户注册：Register
 
 const getRouter = async(userStore) => {
   const routerStore = useRouterStore()

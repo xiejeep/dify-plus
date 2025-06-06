@@ -10,6 +10,7 @@ type RouterGroup struct {
 	InitRouter
 	MenuRouter
 	UserRouter
+	UserRegisterRouter
 	CasbinRouter
 	AutoCodeRouter
 	AuthorityRouter
@@ -41,4 +42,5 @@ var (
 	dictionaryDetailApi = api.ApiGroupApp.SystemApiGroup.DictionaryDetailApi
 	autoCodeTemplateApi = api.ApiGroupApp.SystemApiGroup.AutoCodeTemplateApi
 	exportTemplateApi   = api.ApiGroupApp.SystemApiGroup.SysExportTemplateApi
+	userRegisterApi     = api.ApiGroupApp.SystemApiGroup.UserRegisterApi
 )

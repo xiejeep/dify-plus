@@ -25,10 +25,18 @@ def upgrade():
     tables = inspector.get_table_names()
     
     if 'system_integration_extend' in tables:
+        # 获取现有列
+        columns = inspector.get_columns('system_integration_extend')
+        existing_columns = [col['name'] for col in columns]
+        
         with op.batch_alter_table('system_integration_extend', schema=None) as batch_op:
-            batch_op.add_column(sa.Column('test', sa.Boolean(), server_default=sa.text('false'), nullable=True, comment='是否测试链接联通性'))
-            batch_op.add_column(sa.Column('config', sa.Text(), nullable=True, comment='其他配置'))
-            batch_op.add_column(sa.Column('app_id', sa.Text(), nullable=True, comment='应用ID'))
+            # 只添加不存在的列
+            if 'test' not in existing_columns:
+                batch_op.add_column(sa.Column('test', sa.Boolean(), server_default=sa.text('false'), nullable=True, comment='是否测试链接联通性'))
+            if 'config' not in existing_columns:
+                batch_op.add_column(sa.Column('config', sa.Text(), nullable=True, comment='其他配置'))
+            if 'app_id' not in existing_columns:
+                batch_op.add_column(sa.Column('app_id', sa.Text(), nullable=True, comment='应用ID'))
     # ### end Alembic commands ###
 
 

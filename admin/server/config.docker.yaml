@@ -67,11 +67,11 @@ db-list:
 disk-list:
     - mount-point: /
 email:
-    to: xxx@qq.com
-    from: xxx@163.com
-    host: smtp.163.com
-    secret: xxx
-    nickname: test
+    to: admin@classhorse.top
+    from: admin@classhorse.top
+    host: smtp.resend.com
+    secret: re_b9uYZ4QA_CLLz9awfFSS42r25WgJqsvJY
+    nickname: Dify-Plus
     port: 465
     is-ssl: true
 excel:

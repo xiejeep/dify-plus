@@ -1102,7 +1102,9 @@ services:
 
   # Extend - admin-web
   admin-web:
-    image: ccr.ccs.tencentyun.com/yfgaia/dify-plus-admin-web:1.2.0
+    build:
+      context: ../admin/web
+      dockerfile: Dockerfile
     restart: always
     ports:
       - '8081:8081'
@@ -1116,7 +1118,9 @@ services:
 
   # Extend - admin-server
   admin-server:
-    image: ccr.ccs.tencentyun.com/yfgaia/dify-plus-admin-server:1.2.0
+    build:
+      context: ../admin/server
+      dockerfile: Dockerfile
     restart: always
     ports:
       - '8888:8888'

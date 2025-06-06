@@ -72,8 +72,9 @@ func Routers() *gin.Engine {
 		})
 	}
 	{
-		systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
-		systemRouter.InitInitRouter(PublicGroup) // 自动初始化相关
+		systemRouter.InitBaseRouter(PublicGroup)        // 注册基础功能路由 不做鉴权
+		systemRouter.InitInitRouter(PublicGroup)        // 自动初始化相关
+		systemRouter.InitUserRegisterRouter(PublicGroup) // 用户自主注册路由 不做鉴权
 	}
 
 	{

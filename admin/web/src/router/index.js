@@ -14,6 +14,11 @@ const routes = [{
   name: 'Login',
   component: () => import('@/view/login/index.vue')
 },
+{
+  path: '/register',
+  name: 'Register',
+  component: () => import('@/view/register/index.vue')
+},
 // 新增OA登录 Begin
 {
   path: '/loginCallback',

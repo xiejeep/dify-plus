@@ -22,6 +22,7 @@ type ApiGroup struct {
 	AutoCodeHistoryApi
 	AutoCodeTemplateApi
 	SysParamsApi
+	UserRegisterApi
 }
 
 var (
@@ -30,6 +31,7 @@ var (
 	menuService             = service.ServiceGroupApp.SystemServiceGroup.MenuService
 	userService             = service.ServiceGroupApp.SystemServiceGroup.UserService
 	userExtendService       = service.ServiceGroupApp.SystemServiceGroup.UserExtendService
+	userRegisterService     = service.ServiceGroupApp.SystemServiceGroup.UserRegisterService
 	initDBService           = service.ServiceGroupApp.SystemServiceGroup.InitDBService
 	casbinService           = service.ServiceGroupApp.SystemServiceGroup.CasbinService
 	baseMenuService         = service.ServiceGroupApp.SystemServiceGroup.BaseMenuService
