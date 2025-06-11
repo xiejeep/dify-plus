@@ -458,7 +458,9 @@ x-shared-env: &shared-api-worker-env
 services:
   # API service
   api:
-    image: ccr.ccs.tencentyun.com/yfgaia/dify-plus-api:1.2.0
+    build:
+      context: ../api
+      dockerfile: Dockerfile
     restart: always
     environment:
       # Use the shared environment variables.
@@ -486,7 +488,9 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: ccr.ccs.tencentyun.com/yfgaia/dify-plus-api:1.2.0
+    build:
+      context: ../api
+      dockerfile: Dockerfile
     restart: always
     environment:
       # Use the shared environment variables.
