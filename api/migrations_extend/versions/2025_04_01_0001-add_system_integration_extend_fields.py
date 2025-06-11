@@ -31,8 +31,6 @@ def upgrade():
         
         with op.batch_alter_table('system_integration_extend', schema=None) as batch_op:
             # 只添加不存在的列
-            if 'test' not in existing_columns:
-                batch_op.add_column(sa.Column('test', sa.Boolean(), server_default=sa.text('false'), nullable=True, comment='是否测试链接联通性'))
             if 'config' not in existing_columns:
                 batch_op.add_column(sa.Column('config', sa.Text(), nullable=True, comment='其他配置'))
             if 'app_id' not in existing_columns:
@@ -45,5 +43,4 @@ def downgrade():
     with op.batch_alter_table('system_integration_extend', schema=None) as batch_op:
         batch_op.drop_column('app_id')
         batch_op.drop_column('config')
-        batch_op.drop_column('test')
     # ### end Alembic commands ### 
