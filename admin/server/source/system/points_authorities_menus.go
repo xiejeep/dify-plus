@@ -80,8 +80,8 @@ func (i *initPointsAuthoritiesMenus) InitializeData(ctx context.Context) (next c
 	}
 	
 	// 检查是否已经分配过菜单权限，避免重复分配
-	var existingMenuCount int64
-	if err = db.Model(&authority888).Association("SysBaseMenus").Count(); err == nil && existingMenuCount == 0 {
+	existingMenuCount := db.Model(&authority888).Association("SysBaseMenus").Count()
+	if existingMenuCount == 0 {
 		// 为888角色添加所有积分管理菜单
 		if err = db.Model(&authority888).Association("SysBaseMenus").Append(pointsMenus); err != nil {
 			return next, errors.Wrap(err, "为超级管理员角色分配积分管理菜单失败")
@@ -110,8 +110,8 @@ func (i *initPointsAuthoritiesMenus) InitializeData(ctx context.Context) (next c
 	// 为9528角色添加所有积分管理菜单
 	if authority9528.AuthorityId != 0 {
 		// 检查是否已经分配过菜单权限
-		var existingMenuCount9528 int64
-		if err = db.Model(&authority9528).Association("SysBaseMenus").Count(); err == nil && existingMenuCount9528 == 0 {
+		existingMenuCount9528 := db.Model(&authority9528).Association("SysBaseMenus").Count()
+		if existingMenuCount9528 == 0 {
 			if err = db.Model(&authority9528).Association("SysBaseMenus").Append(pointsMenus); err != nil {
 				return next, errors.Wrap(err, "为管理员角色分配积分管理菜单失败")
 			}
