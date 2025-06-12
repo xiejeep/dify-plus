@@ -38,10 +38,19 @@ func (i *initPointsAuthoritiesMenus) InitializeData(ctx context.Context) (next c
 		return ctx, system.ErrMissingDBContext
 	}
 
-	// 获取权限数据
-	authorities, ok := ctx.Value(initAuthority{}.InitializerName()).([]sysModel.SysAuthority)
-	if !ok {
-		return ctx, errors.Wrap(system.ErrMissingDependentContext, "创建积分管理 [菜单-权限] 关联失败, 未找到权限表初始化数据")
+	// 先尝试从context获取权限数据，如果失败则直接从数据库查询
+	var authorities []sysModel.SysAuthority
+	authoritiesFromCtx, ok := ctx.Value(initAuthority{}.InitializerName()).([]sysModel.SysAuthority)
+	if ok {
+		authorities = authoritiesFromCtx
+	} else {
+		// 从数据库直接查询权限数据
+		if err = db.Find(&authorities).Error; err != nil {
+			return ctx, errors.Wrap(err, "创建积分管理 [菜单-权限] 关联失败, 无法查询权限数据")
+		}
+		if len(authorities) == 0 {
+			return ctx, errors.New("创建积分管理 [菜单-权限] 关联失败, 未找到任何权限数据")
+		}
 	}
 
 	// 获取积分管理菜单数据
@@ -59,16 +68,24 @@ func (i *initPointsAuthoritiesMenus) InitializeData(ctx context.Context) (next c
 			return next, err
 		}
 		// 如果角色888不存在，尝试使用authorities数组中的第一个（通常是888）
-		if len(authorities) > 0 {
-			authority888 = authorities[0]
-		} else {
-			return next, errors.New("未找到超级管理员角色")
+		for _, auth := range authorities {
+			if auth.AuthorityId == 888 {
+				authority888 = auth
+				break
+			}
+		}
+		if authority888.AuthorityId == 0 {
+			return next, errors.New("未找到超级管理员角色(888)")
 		}
 	}
 	
-	// 为888角色添加所有积分管理菜单
-	if err = db.Model(&authority888).Association("SysBaseMenus").Append(pointsMenus); err != nil {
-		return next, errors.Wrap(err, "为超级管理员角色分配积分管理菜单失败")
+	// 检查是否已经分配过菜单权限，避免重复分配
+	var existingMenuCount int64
+	if err = db.Model(&authority888).Association("SysBaseMenus").Count(); err == nil && existingMenuCount == 0 {
+		// 为888角色添加所有积分管理菜单
+		if err = db.Model(&authority888).Association("SysBaseMenus").Append(pointsMenus); err != nil {
+			return next, errors.Wrap(err, "为超级管理员角色分配积分管理菜单失败")
+		}
 	}
 
 	// 为管理员角色 (9528) 分配所有积分管理菜单权限
@@ -92,13 +109,14 @@ func (i *initPointsAuthoritiesMenus) InitializeData(ctx context.Context) (next c
 	
 	// 为9528角色添加所有积分管理菜单
 	if authority9528.AuthorityId != 0 {
-		if err = db.Model(&authority9528).Association("SysBaseMenus").Append(pointsMenus); err != nil {
-			return next, errors.Wrap(err, "为管理员角色分配积分管理菜单失败")
+		// 检查是否已经分配过菜单权限
+		var existingMenuCount9528 int64
+		if err = db.Model(&authority9528).Association("SysBaseMenus").Count(); err == nil && existingMenuCount9528 == 0 {
+			if err = db.Model(&authority9528).Association("SysBaseMenus").Append(pointsMenus); err != nil {
+				return next, errors.Wrap(err, "为管理员角色分配积分管理菜单失败")
+			}
 		}
 	}
-
-	// 为其他角色分配基础积分查看权限（可选）
-	// 这里可以根据需要为其他角色分配特定的积分管理菜单
 
 	return next, nil
 }
