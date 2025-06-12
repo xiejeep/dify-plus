@@ -198,6 +198,20 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "888", V1: "/gaia/dashboard/getAppTokenDailyQuotaData", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/gaia/dashboard/getAppTokenQuotaRankingData", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/gaia/dashboard/getAppQuotaRankingData", V2: "GET"},
+		
+		// 签到积分系统权限
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/checkin", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getStatus", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getUserPointsByAccountId/*", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/exchangePoints", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getUserPoints", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getCheckinRecords", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getPointsTransaction", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getPointsExchange", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getPointsConfig", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/updatePointsConfig", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/manualAdjustPoints", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/gaia/checkin/getPointsStatistics", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/gaia/dashboard/getAccountQuotaRankingData", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/user/sync", V2: "POST"},
 

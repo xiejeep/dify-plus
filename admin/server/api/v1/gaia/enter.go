@@ -9,6 +9,7 @@ type ApiGroup struct {
 	SystemApi
 	TestApi
 	SystemOAuth2Api
+	CheckinApi
 }
 
 var (
@@ -18,3 +19,4 @@ var (
 )
 var QuotaService = service.ServiceGroupApp.GaiaServiceGroup.QuotaService
 var TestService = service.ServiceGroupApp.GaiaServiceGroup.TestService
+var CheckinService = service.ServiceGroupApp.GaiaServiceGroup.CheckinService
