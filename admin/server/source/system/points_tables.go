@@ -11,7 +11,7 @@ import (
 
 type initPointsTables struct{}
 
-const initOrderPointsTables = initOrderUser + 1
+const initOrderPointsTables = initOrderPointsMenus + 1
 
 // auto run
 func init() {
