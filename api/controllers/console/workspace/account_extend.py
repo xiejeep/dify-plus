@@ -7,6 +7,7 @@ from extensions.ext_database import db
 from fields.member_fields_extend import account_money_fields
 from libs.login import login_required
 from models.account_money_extend import AccountMoneyExtend
+from configs import dify_config
 
 
 class AccountMoneyApi(Resource):
@@ -19,7 +20,7 @@ class AccountMoneyApi(Resource):
             db.session.query(AccountMoneyExtend).filter(AccountMoneyExtend.account_id == current_user.id).first()
         )
         if not account_money:
-            return {"total_quota": "15", "used_quota": "0"}, 200
+            return {"total_quota": dify_config.DEFAULT_ACCOUNT_TOTAL_QUOTA, "used_quota": "0"}, 200
         return account_money
 
 

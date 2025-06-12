@@ -854,6 +854,13 @@ class AccountConfig(BaseSettings):
     )
 
 
+class AccountQuotaFeature(Feature):
+    DEFAULT_TOTAL_QUOTA = dify_config.DEFAULT_ACCOUNT_TOTAL_QUOTA or 30.0  # 用户默认总额度(美元)
+
+    def __init__(self):
+        self.default_total_quota = self.DEFAULT_TOTAL_QUOTA
+
+
 class FeatureConfig(
     # place the configs in alphabet order
     AppExecutionConfig,

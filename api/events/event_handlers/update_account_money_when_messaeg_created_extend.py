@@ -1,4 +1,5 @@
 from configs import dify_config
+from configs.feature import AccountQuotaFeature
 from events.message_event import message_was_created
 from extensions.ext_database import db
 from models.account import Account
@@ -40,7 +41,7 @@ def handle(sender, **kwargs):
         account_money_add = AccountMoneyExtend(
             account_id=payerId,
             used_quota=price,
-            total_quota=15,  # TODO 初始总额度这里到时候默认15要改
+            total_quota=float(dify_config.DEFAULT_ACCOUNT_TOTAL_QUOTA),  # 从配置获取默认总额度
         )
         db.session.add(account_money_add)
 

@@ -4,7 +4,7 @@ import { fetchUserMoney } from '@/service/common-extend'
 import type { UserMoney } from '@/models/common-extend'
 
 const AccountMoneyExtend = () => {
-  const [userMoney, setUserMoney] = useState<UserMoney>({ used_quota: 0, total_quota: 15 }) // TODO total_quota初始总额度
+  const [userMoney, setUserMoney] = useState<UserMoney>({ used_quota: 0, total_quota: 30 }) // TODO total_quota初始总额度
   const [isFetched, setIsFetched] = useState(false)
   const getUserMoney = async () => {
     const data: any = await fetchUserMoney()

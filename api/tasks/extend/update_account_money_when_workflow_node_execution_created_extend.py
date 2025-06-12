@@ -64,7 +64,7 @@ def update_account_money_when_workflow_node_execution_created_extend(self, workf
             account_money_add = AccountMoneyExtend(
                 account_id=payerId,
                 used_quota=price,
-                total_quota=15,  # TODO 初始总额度这里到时候默认15要改
+                total_quota=float(dify_config.DEFAULT_ACCOUNT_TOTAL_QUOTA),  # 从配置获取默认总额度
             )
             db.session.add(account_money_add)
 
