@@ -1,4 +1,4 @@
-from typing import Annotated, Literal, Optional
+from typing import Annotated, ClassVar, Literal, Optional
 
 from pydantic import (
     AliasChoices,
@@ -12,6 +12,7 @@ from pydantic import (
 )
 from pydantic_settings import BaseSettings
 
+from configs import dify_config
 from configs.feature.hosted_service import HostedServiceConfig
 
 
@@ -854,10 +855,11 @@ class AccountConfig(BaseSettings):
     )
 
 
-class AccountQuotaFeature(Feature):
-    DEFAULT_TOTAL_QUOTA = dify_config.DEFAULT_ACCOUNT_TOTAL_QUOTA or 30.0  # 用户默认总额度(美元)
+class AccountQuotaFeature(BaseSettings):
+    DEFAULT_TOTAL_QUOTA: ClassVar[float] = float(dify_config.DEFAULT_ACCOUNT_TOTAL_QUOTA or 30.0)  # 用户默认总额度(美元)
 
     def __init__(self):
+        super().__init__()
         self.default_total_quota = self.DEFAULT_TOTAL_QUOTA
 
 

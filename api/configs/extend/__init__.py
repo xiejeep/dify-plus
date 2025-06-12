@@ -62,6 +62,11 @@ class ExtendInfo(BaseSettings):
         default=None,
     )
 
+    DEFAULT_ACCOUNT_TOTAL_QUOTA: Optional[str] = Field(
+        description="Default total quota for user accounts in USD",
+        default="30.0",
+    )
+
 
 class ExtendConfig(ExtendInfo):
     pass
