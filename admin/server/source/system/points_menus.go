@@ -39,7 +39,6 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 	// 定义积分管理菜单
 	pointsMenus := []sysModel.SysBaseMenu{
 		{
-			ID:        41,
 			ParentId:  0,
 			Path:      "points",
 			Name:      "pointsManagement",
@@ -52,8 +51,7 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ID:        42,
-			ParentId:  41,
+			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
 			Path:      "users",
 			Name:      "pointsUsers",
 			Hidden:    false,
@@ -66,8 +64,7 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ID:        43,
-			ParentId:  41,
+			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
 			Path:      "records",
 			Name:      "pointsRecords",
 			Hidden:    false,
@@ -79,8 +76,7 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ID:        44,
-			ParentId:  41,
+			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
 			Path:      "transactions",
 			Name:      "pointsTransactions",
 			Hidden:    false,
@@ -92,8 +88,7 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ID:        45,
-			ParentId:  41,
+			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
 			Path:      "config",
 			Name:      "pointsConfig",
 			Hidden:    false,
@@ -118,9 +113,21 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 		return ctx, errors.Wrap(err, "检查积分菜单是否存在失败")
 	}
 
-	// 批量创建积分菜单
-	if err = db.Create(&pointsMenus).Error; err != nil {
-		return ctx, errors.Wrap(err, "创建积分管理菜单失败")
+	// 先删除可能存在的旧菜单记录（处理主键冲突）
+	db.Where("name IN ?", []string{"pointsManagement", "pointsUsers", "pointsRecords", "pointsTransactions", "pointsConfig"}).Delete(&sysModel.SysBaseMenu{})
+
+	// 先创建父菜单
+	parentMenu := pointsMenus[0]
+	if err = db.Create(&parentMenu).Error; err != nil {
+		return ctx, errors.Wrap(err, "创建积分管理父菜单失败")
+	}
+
+	// 更新子菜单的ParentId并创建
+	for i := 1; i < len(pointsMenus); i++ {
+		pointsMenus[i].ParentId = parentMenu.ID
+		if err = db.Create(&pointsMenus[i]).Error; err != nil {
+			return ctx, errors.Wrap(err, "创建积分管理子菜单失败")
+		}
 	}
 
 	return ctx, nil
@@ -136,4 +143,4 @@ func (i *initPointsMenus) DataInserted(ctx context.Context) bool {
 	var menu sysModel.SysBaseMenu
 	err := db.Where("name = ?", "pointsManagement").First(&menu).Error
 	return err == nil
-} 
+}
