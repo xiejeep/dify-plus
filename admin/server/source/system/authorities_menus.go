@@ -44,17 +44,9 @@ func (i *initMenuAuthority) InitializeData(ctx context.Context) (next context.Co
 		return next, errors.Wrap(errors.New(""), "创建 [菜单-权限] 关联失败, 未找到菜单表初始化数据")
 	}
 	next = ctx
-	// 888
-	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Replace(menus[31:34]); err != nil {
-		return next, err
-	}
-	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Append(menus[37:40]); err != nil {
-		return next, err
-	}
-	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Append(menus[2:5]); err != nil {
-		return next, err
-	}
-	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Append(menus[8:9]); err != nil {
+
+	// 为超级管理员(888)分配所有菜单权限
+	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Replace(menus); err != nil {
 		return next, err
 	}
 
