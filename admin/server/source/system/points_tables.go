@@ -11,7 +11,9 @@ import (
 
 type initPointsTables struct{}
 
-const initOrderPointsTables = initOrderPointsMenus + 1
+// 修改初始化顺序，移除对积分菜单初始化的依赖
+// 积分表的创建只依赖基础菜单初始化即可
+const initOrderPointsTables = initOrderMenu + 1
 
 // auto run
 func init() {
