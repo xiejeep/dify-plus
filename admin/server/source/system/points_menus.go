@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	sysModel "github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
 	"github.com/pkg/errors"
@@ -14,6 +15,7 @@ const initOrderPointsMenus = initOrderMenu + 1
 type initPointsMenus struct{}
 
 // auto run
+// 启用积分菜单自动初始化
 func init() {
 	system.RegisterInit(initOrderPointsMenus, &initPointsMenus{})
 }
@@ -39,6 +41,7 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 	// 定义积分管理菜单
 	pointsMenus := []sysModel.SysBaseMenu{
 		{
+			GVA_MODEL: global.GVA_MODEL{ID: 41}, // 明确指定ID，避免与基础菜单冲突
 			ParentId:  0,
 			Path:      "points",
 			Name:      "pointsManagement",
@@ -51,7 +54,8 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
+			GVA_MODEL: global.GVA_MODEL{ID: 42}, // 明确指定ID
+			ParentId:  41, // 直接使用父菜单ID
 			Path:      "users",
 			Name:      "pointsUsers",
 			Hidden:    false,
@@ -64,7 +68,8 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
+			GVA_MODEL: global.GVA_MODEL{ID: 43}, // 明确指定ID
+			ParentId:  41, // 直接使用父菜单ID
 			Path:      "records",
 			Name:      "pointsRecords",
 			Hidden:    false,
@@ -76,7 +81,8 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
+			GVA_MODEL: global.GVA_MODEL{ID: 44}, // 明确指定ID
+			ParentId:  41, // 直接使用父菜单ID
 			Path:      "transactions",
 			Name:      "pointsTransactions",
 			Hidden:    false,
@@ -88,7 +94,8 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 			},
 		},
 		{
-			ParentId:  0, // 这里需要在创建后更新为父菜单的实际ID
+			GVA_MODEL: global.GVA_MODEL{ID: 45}, // 明确指定ID
+			ParentId:  41, // 直接使用父菜单ID
 			Path:      "config",
 			Name:      "pointsConfig",
 			Hidden:    false,
@@ -116,18 +123,9 @@ func (i *initPointsMenus) InitializeData(ctx context.Context) (next context.Cont
 	// 先删除可能存在的旧菜单记录（处理主键冲突）
 	db.Where("name IN ?", []string{"pointsManagement", "pointsUsers", "pointsRecords", "pointsTransactions", "pointsConfig"}).Delete(&sysModel.SysBaseMenu{})
 
-	// 先创建父菜单
-	parentMenu := pointsMenus[0]
-	if err = db.Create(&parentMenu).Error; err != nil {
-		return ctx, errors.Wrap(err, "创建积分管理父菜单失败")
-	}
-
-	// 更新子菜单的ParentId并创建
-	for i := 1; i < len(pointsMenus); i++ {
-		pointsMenus[i].ParentId = parentMenu.ID
-		if err = db.Create(&pointsMenus[i]).Error; err != nil {
-			return ctx, errors.Wrap(err, "创建积分管理子菜单失败")
-		}
+	// 批量创建所有积分菜单（由于已指定明确的ID和ParentId，可以直接批量创建）
+	if err = db.Create(&pointsMenus).Error; err != nil {
+		return ctx, errors.Wrap(err, "创建积分管理菜单失败")
 	}
 
 	return ctx, nil
@@ -139,8 +137,9 @@ func (i *initPointsMenus) DataInserted(ctx context.Context) bool {
 		return false
 	}
 
-	// 检查积分主菜单是否存在
-	var menu sysModel.SysBaseMenu
-	err := db.Where("name = ?", "pointsManagement").First(&menu).Error
-	return err == nil
+	// 检查所有积分菜单是否都存在
+	var count int64
+	db.Model(&sysModel.SysBaseMenu{}).Where("name IN ?", 
+		[]string{"pointsManagement", "pointsUsers", "pointsRecords", "pointsTransactions", "pointsConfig"}).Count(&count)
+	return count == 5 // 确保所有5个菜单都存在
 }

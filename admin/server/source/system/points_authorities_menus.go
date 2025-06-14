@@ -14,9 +14,10 @@ const initOrderPointsAuthoritiesMenus = initOrderPointsMenus + 1
 type initPointsAuthoritiesMenus struct{}
 
 // auto run
-func init() {
-	system.RegisterInit(initOrderPointsAuthoritiesMenus, &initPointsAuthoritiesMenus{})
-}
+// 禁用积分权限菜单自动初始化 - 改为手动配置
+// func init() {
+// 	system.RegisterInit(initOrderPointsAuthoritiesMenus, &initPointsAuthoritiesMenus{})
+// }
 
 func (i *initPointsAuthoritiesMenus) MigrateTable(ctx context.Context) (context.Context, error) {
 	return ctx, nil // do nothing
@@ -57,13 +58,17 @@ func (i *initPointsAuthoritiesMenus) InitializeData(ctx context.Context) (next c
 
 	// 为超级管理员(888)和管理员(9528)分配积分管理菜单权限
 	for _, authority := range authorities {
-		// 清除该角色现有的积分菜单权限
-		err = db.Model(&authority).Association("SysBaseMenus").Delete(pointsMenus)
-		if err != nil {
-			return ctx, errors.Wrapf(err, "清除角色%d的积分菜单权限失败", authority.AuthorityId)
+		// 只清除该角色现有的积分菜单权限，不影响其他菜单
+		var existingPointsMenus []sysModel.SysBaseMenu
+		err = db.Model(&authority).Association("SysBaseMenus").Find(&existingPointsMenus, "name IN ?", []string{"pointsManagement", "pointsUsers", "pointsRecords", "pointsTransactions", "pointsConfig"})
+		if err == nil && len(existingPointsMenus) > 0 {
+			err = db.Model(&authority).Association("SysBaseMenus").Delete(existingPointsMenus)
+			if err != nil {
+				return ctx, errors.Wrapf(err, "清除角色%d的积分菜单权限失败", authority.AuthorityId)
+			}
 		}
 
-		// 重新分配积分菜单权限
+		// 添加积分菜单权限（使用Append而不是Replace，保留现有其他菜单权限）
 		err = db.Model(&authority).Association("SysBaseMenus").Append(pointsMenus)
 		if err != nil {
 			return ctx, errors.Wrapf(err, "为角色%d分配积分菜单权限失败", authority.AuthorityId)
@@ -100,4 +105,4 @@ func (i *initPointsAuthoritiesMenus) DataInserted(ctx context.Context) bool {
 	}
 
 	return false
-} 
+}

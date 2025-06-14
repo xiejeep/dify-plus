@@ -106,13 +106,28 @@ func (i *initMenuAuthority) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
+	
+	// 检查超级管理员是否拥有所有基础菜单权限
 	auth := &sysModel.SysAuthority{}
-	if ret := db.Model(auth).
-		Where("authority_id = ?", 888).Preload("SysBaseMenus").Find(auth); ret != nil {
+	if ret := db.Model(auth).Where("authority_id = ?", 888).Preload("SysBaseMenus").Find(auth); ret != nil {
 		if ret.Error != nil {
 			return false
 		}
-		return len(auth.SysBaseMenus) > 0
+		
+		// 获取所有基础菜单数量（排除积分相关菜单）
+		var totalBaseMenus int64
+		db.Model(&sysModel.SysBaseMenu{}).Where("name NOT IN ?", []string{"pointsManagement", "pointsUsers", "pointsRecords", "pointsTransactions", "pointsConfig"}).Count(&totalBaseMenus)
+		
+		// 统计超级管理员拥有的非积分菜单数量
+		var adminNonPointsMenus int64
+		for _, menu := range auth.SysBaseMenus {
+			if menu.Name != "pointsManagement" && menu.Name != "pointsUsers" && menu.Name != "pointsRecords" && menu.Name != "pointsTransactions" && menu.Name != "pointsConfig" {
+				adminNonPointsMenus++
+			}
+		}
+		
+		// 只有当超级管理员拥有所有基础菜单权限时才认为数据已插入
+		return adminNonPointsMenus >= totalBaseMenus
 	}
 	return false
 }
